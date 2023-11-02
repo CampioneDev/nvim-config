@@ -1,3 +1,7 @@
+if vim.g.vscode then
+	return
+end
+
 require("noice").setup({
 	lsp = {
 		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
@@ -14,5 +18,10 @@ require("noice").setup({
 		long_message_to_split = true, -- long messages will be sent to a split
 		inc_rename = false, -- enables an input dialog for inc-rename.nvim
 		lsp_doc_border = false, -- add a border to hover docs and signature help
+	},
+	messages = {
+		-- NOTE: If you enable messages, then the cmdline is enabled automatically.
+		-- This is a current Neovim limitation.
+		enabled = false, -- enables the Noice messages UI
 	},
 })

@@ -1,3 +1,7 @@
+if vim.g.vscode then
+	return
+end
+
 local lsp_zero = require('lsp-zero')
 
 lsp_zero.on_attach(function(client, bufnr)
@@ -35,6 +39,7 @@ cmp.setup({
 		{ name = 'path' },
 		{ name = 'nvim_lsp' },
 		{ name = 'nvim_lua' },
+		{ name = 'buffer' }
 	},
 	formatting = lsp_zero.cmp_format(),
 	mapping = cmp.mapping.preset.insert({

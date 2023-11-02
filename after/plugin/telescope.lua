@@ -1,3 +1,7 @@
+if vim.g.vscode then
+	return
+end
+
 local builtin = require("telescope.builtin")
 
 vim.keymap.set("n", "<leader>ps", function()
