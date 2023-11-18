@@ -1,7 +1,3 @@
-if vim.g.vscode then
-	return
-end
-
 require('catppuccin').setup({
 	-- disable_background = true -- rosepine
 	transparent_background = true -- catp

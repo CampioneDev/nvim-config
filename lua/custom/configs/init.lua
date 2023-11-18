@@ -20,6 +20,7 @@ vim.opt.scrolloff = 8
 
 vim.o.updatetime = 50
 
+require("custom.configs.filetypes")
 require("custom.configs.theme")
 require("custom.configs.remap")
 require("custom.configs.rust-tools")
