@@ -112,7 +112,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim', opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -120,12 +120,12 @@ require('lazy').setup({
       -- See `:help gitsigns.txt`
       signs = {
         -- copiati da https://www.lazyvim.org/plugins/editor#gitsignsnvim
-        add = { text = "▎" },
-        change = { text = "▎" },
-        delete = { text = "" },
-        topdelete = { text = "" },
-        changedelete = { text = "▎" },
-        untracked = { text = "▎" },
+        add = { text = '▎' },
+        change = { text = '▎' },
+        delete = { text = '' },
+        topdelete = { text = '' },
+        changedelete = { text = '▎' },
+        untracked = { text = '▎' },
       },
       on_attach = function(bufnr)
         vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk, { buffer = bufnr, desc = 'Preview git hunk' })
@@ -202,8 +202,12 @@ require('lazy').setup({
         'nvim-telescope/telescope-fzf-native.nvim',
         -- NOTE: If you are having trouble with this installation,
         --       refer to the README for telescope-fzf-native for more instructions.
-        build = 'make',
+        build = vim.fn.has 'unix' == 1 and 'make'
+          or 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
         cond = function()
+          if vim.fn.has 'unix' ~= 1 then
+            return true
+          end
           return vim.fn.executable 'make' == 1
         end,
       },
@@ -308,7 +312,7 @@ require('telescope').setup {
   defaults = {
     mappings = {
       i = {
-        ["<C-h>"] = "which_key",
+        ['<C-h>'] = 'which_key',
         ['<C-u>'] = false,
         ['<C-d>'] = false,
       },
@@ -327,17 +331,17 @@ local function find_git_root()
   local current_dir
   local cwd = vim.fn.getcwd()
   -- If the buffer is not associated with a file, return nil
-  if current_file == "" then
+  if current_file == '' then
     current_dir = cwd
   else
     -- Extract the directory from the current file's path
-    current_dir = vim.fn.fnamemodify(current_file, ":h")
+    current_dir = vim.fn.fnamemodify(current_file, ':h')
   end
 
   -- Find the Git root directory from the current file's path
-  local git_root = vim.fn.systemlist("git -C " .. vim.fn.escape(current_dir, " ") .. " rev-parse --show-toplevel")[1]
+  local git_root = vim.fn.systemlist('git -C ' .. vim.fn.escape(current_dir, ' ') .. ' rev-parse --show-toplevel')[1]
   if vim.v.shell_error ~= 0 then
-    print("Not a git repository. Searching on current working directory")
+    print 'Not a git repository. Searching on current working directory'
     return cwd
   end
   return git_root
@@ -347,9 +351,9 @@ end
 local function live_grep_git_root()
   local git_root = find_git_root()
   if git_root then
-    require('telescope.builtin').live_grep({
+    require('telescope.builtin').live_grep {
       search_dirs = { git_root },
-    })
+    }
   end
 end
 
@@ -381,8 +385,24 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'templ', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim',
-      'bash', 'regex', 'markdown', 'markdown_inline' },
+    ensure_installed = {
+      'c',
+      'cpp',
+      'go',
+      'templ',
+      'lua',
+      'python',
+      'rust',
+      'tsx',
+      'javascript',
+      'typescript',
+      'vimdoc',
+      'vim',
+      'bash',
+      'regex',
+      'markdown',
+      'markdown_inline',
+    },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = true,
@@ -490,6 +510,8 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
+CC_GLOBAL_LSP_ON_ATTACH = on_attach
+
 -- document existing key chains
 require('which-key').register {
   ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
@@ -518,16 +540,27 @@ local servers = {
   clangd = {},
   gopls = {},
   -- pyright = {},
-  rust_analyzer = {},
+  rust_analyzer = {
+    -- settings = {
+    --   ['rust-analyzer'] = {
+    --     checkOnSave = {
+    --       command = 'clippy',
+    --     },
+    --   },
+    -- },
+  },
   tsserver = {},
   bashls = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
   templ = {},
+  cssls = {},
 
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
+      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+      diagnostics = { disable = { 'missing-fields' } },
     },
   },
 }
@@ -548,6 +581,12 @@ mason_lspconfig.setup {
 
 mason_lspconfig.setup_handlers {
   function(server_name)
+    if server_name == 'rust_analyzer' then
+      do
+        return
+      end
+    end
+    print('Setting up ' .. server_name)
     require('lspconfig')[server_name].setup {
       capabilities = capabilities,
       on_attach = on_attach,
@@ -571,7 +610,7 @@ cmp.setup {
     end,
   },
   completion = {
-    completeopt = 'menu,menuone,noinsert'
+    completeopt = 'menu,menuone,noinsert',
   },
   mapping = cmp.mapping.preset.insert {
     ['<C-n>'] = cmp.mapping.select_next_item(),
@@ -605,10 +644,28 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    -- https://rsdlt.github.io/posts/rust-nvim-ide-guide-walkthrough-development-debug/#3-install-the-complete-and-snippets-plugins-suite
+    { name = 'path' }, -- file paths
+    -- { name = 'nvim_lsp',               keyword_length = 3 }, -- from language server
+    { name = 'nvim_lsp_signature_help' }, -- display function signatures with current parameter emphasized
+    { name = 'nvim_lua', keyword_length = 2 }, -- complete neovim's Lua runtime API such vim.lsp.*
+    { name = 'buffer', keyword_length = 2 }, -- source current buffer
+    { name = 'vsnip', keyword_length = 2 }, -- nvim-cmp source for vim-vsnip
+    { name = 'calc' }, -- source for math calculation
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
   },
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
-require("custom/configs")
+require 'custom/configs'
+require 'custom/configs'
+require 'custom/configs'
+require 'custom/configs'
+require 'custom/configs'
+require 'custom/configs'
+require 'custom/configs'

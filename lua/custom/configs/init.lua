@@ -20,6 +20,12 @@ vim.opt.scrolloff = 8
 
 vim.o.updatetime = 50
 
+-- -- Get the path to the Mason bin directory
+-- local mason_bin_path = vim.fn.stdpath('data') .. '/mason/bin'
+--
+-- -- Prepend the Mason bin path to the PATH environment variable
+-- vim.env.PATH = mason_bin_path .. ':' .. vim.env.PATH
+
 require("custom.configs.filetypes")
 require("custom.configs.theme")
 require("custom.configs.remap")
