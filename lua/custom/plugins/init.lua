@@ -3,7 +3,5 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-  { "ThePrimeagen/vim-be-good" },
-  { "catppuccin/nvim",         name = "catppuccin", priority = 1000 }
-  -- { 'rose-pine/neovim',        name = 'rose-pine' }
+  { 'ThePrimeagen/vim-be-good' },
 }

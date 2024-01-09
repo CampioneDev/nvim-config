@@ -1,11 +1,15 @@
-vim.wo.relativenumber = true
+vim.opt.relativenumber = true
 
-vim.opt.guicursor = ""
+vim.opt.guicursor = ''
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
+
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+vim.opt.wrap = false
 
 vim.opt.swapfile = false
 vim.opt.backup = false
@@ -26,7 +30,5 @@ vim.o.updatetime = 50
 -- -- Prepend the Mason bin path to the PATH environment variable
 -- vim.env.PATH = mason_bin_path .. ':' .. vim.env.PATH
 
-require("custom.configs.filetypes")
-require("custom.configs.theme")
-require("custom.configs.remap")
-require("custom.configs.rust-tools")
+require 'custom.configs.filetypes'
+require 'custom.configs.remap'
