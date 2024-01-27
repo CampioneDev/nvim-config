@@ -21,8 +21,11 @@ vim.opt.termguicolors = true
 -- vim.g.loaded_netrwPlugin = 1
 
 vim.opt.scrolloff = 8
+vim.opt.winminwidth = 15
+vim.opt.winheight = 5
+vim.opt.winminheight = 5
 
-vim.o.updatetime = 50
+vim.opt.updatetime = 50
 
 -- -- Get the path to the Mason bin directory
 -- local mason_bin_path = vim.fn.stdpath('data') .. '/mason/bin'

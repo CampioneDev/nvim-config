@@ -20,6 +20,11 @@ local servers = {
       provideFormatter = false,
     },
   },
+  eslint = {
+    -- copied from tsserver on :LspInfo
+    filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx' },
+  },
+  lemminx = {},
 
   lua_ls = {
     settings = {

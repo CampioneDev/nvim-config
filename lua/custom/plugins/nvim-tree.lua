@@ -1,15 +1,16 @@
 return {
-  "nvim-tree/nvim-tree.lua",
+  'nvim-tree/nvim-tree.lua',
+  enabled = false,
   dependencies = {
-    "nvim-tree/nvim-web-devicons"
+    'nvim-tree/nvim-web-devicons',
   },
   config = function()
     -- global
-    vim.api.nvim_set_keymap("n", "<C-h>", ":NvimTreeToggle<cr>", { silent = true, noremap = true })
+    vim.api.nvim_set_keymap('n', '<C-h>', ':NvimTreeToggle<cr>', { silent = true, noremap = true })
     -- vim.api.nvim_set_keymap("n", "<C-g>", ":NvimTreeFindFile<cr>", { silent = true, noremap = true })
     vim.api.nvim_set_keymap(
-      "n",
-      "<C-g>",
+      'n',
+      '<C-g>',
       ":lua if require('nvim-tree.api').tree.is_visible() then require('nvim-tree.api').tree.close() else vim.cmd('NvimTreeFindFile') end<cr>",
       { silent = true, noremap = true }
     )
@@ -17,7 +18,7 @@ return {
     local HEIGHT_RATIO = 0.8
     local WIDTH_RATIO = 0.5
 
-    require("nvim-tree").setup({
+    require('nvim-tree').setup {
       view = {
         centralize_selection = true,
         number = true,
@@ -33,11 +34,10 @@ return {
             local window_w_int = math.floor(window_w)
             local window_h_int = math.floor(window_h)
             local center_x = (screen_w - window_w) / 2
-            local center_y = ((vim.opt.lines:get() - window_h) / 2)
-                - vim.opt.cmdheight:get()
+            local center_y = ((vim.opt.lines:get() - window_h) / 2) - vim.opt.cmdheight:get()
             return {
-              border = "rounded",
-              relative = "editor",
+              border = 'rounded',
+              relative = 'editor',
               row = center_y,
               col = center_x,
               width = window_w_int,
@@ -58,6 +58,6 @@ return {
         enable = true,
         show_on_dirs = true,
       },
-    })
-  end
+    }
+  end,
 }

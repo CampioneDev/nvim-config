@@ -4,6 +4,10 @@ vim.keymap.set('n', '<leader>sW', function()
   builtin.grep_string { search = vim.fn.input 'Grep > ' }
 end, { desc = '[S]earch [W]ord (CC)' })
 
+vim.keymap.set('n', '<leader>sp', function()
+  builtin.live_grep { glob_pattern = vim.fn.input 'Glob Pattern > ' }
+end, { desc = '[S]earch by grep with glob [P]attern (CC)' })
+
 vim.keymap.set('n', '<leader>sk', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps (CC)' })
 vim.keymap.set('n', '<leader>sc', require('telescope.builtin').commands, { desc = '[S]earch [C]ommands (CC)' })
 
@@ -22,25 +26,25 @@ vim.keymap.set('n', '<leader>se', function()
     end
 
     pickers
-      .new({}, {
-        prompt_title = 'Loaded Telescope Extensions',
-        finder = finders.new_table {
-          results = extensions,
-        },
-        sorter = sorters.get_generic_fuzzy_sorter(),
-        attach_mappings = function(_, map)
-          map('i', '<CR>', function(prompt_bufnr)
-            local selection = action_state.get_selected_entry()
-            actions.close(prompt_bufnr)
-            -- CC - let's try to run the extension as a command
-            pcall(function()
-              vim.cmd('Telescope ' .. selection[1])
+        .new({}, {
+          prompt_title = 'Loaded Telescope Extensions',
+          finder = finders.new_table {
+            results = extensions,
+          },
+          sorter = sorters.get_generic_fuzzy_sorter(),
+          attach_mappings = function(_, map)
+            map('i', '<CR>', function(prompt_bufnr)
+              local selection = action_state.get_selected_entry()
+              actions.close(prompt_bufnr)
+              -- CC - let's try to run the extension as a command
+              pcall(function()
+                vim.cmd('Telescope ' .. selection[1])
+              end)
             end)
-          end)
-          return true
-        end,
-      })
-      :find()
+            return true
+          end,
+        })
+        :find()
   end
 
   list_loaded_telescope_extensions()
