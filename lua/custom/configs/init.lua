@@ -7,8 +7,9 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
-vim.opt.splitbelow = true
-vim.opt.splitright = true
+-- already in init.lua
+-- vim.opt.splitbelow = true
+-- vim.opt.splitright = true
 vim.opt.wrap = false
 
 vim.opt.swapfile = false
@@ -20,7 +21,8 @@ vim.opt.termguicolors = true
 -- vim.g.loaded_netrw = 1
 -- vim.g.loaded_netrwPlugin = 1
 
-vim.opt.scrolloff = 8
+-- already in init.lua
+-- vim.opt.scrolloff = 8
 vim.opt.winminwidth = 15
 vim.opt.winheight = 5
 vim.opt.winminheight = 5

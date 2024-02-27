@@ -21,24 +21,29 @@ return {
           id = 'cc_neo_tree_window_after_open',
         },
         {
-          event = 'neo_tree_window_after_close',
+          event = 'neo_tree_window_before_close',
           handler = function(_)
             open = false
           end,
-          id = 'cc_neo_tree_window_after_close',
+          id = 'cc_neo_tree_window_before_close',
         },
       },
     }
     -- print('neotree', vim.inspect(neotree))
 
-    vim.keymap.set('n', '<C-h>', ':Neotree toggle position=float<cr>',
-      { desc = 'Neotree - toggle', silent = true, noremap = true })
-    vim.keymap.set('n', '<C-g>', function()
+    local toggle = function()
       if open then
         vim.cmd 'Neotree close'
       else
         vim.cmd 'Neotree reveal position=float'
       end
-    end, { desc = 'Neotree - toggle', silent = true, noremap = true })
+    end
+
+    vim.keymap.set('n', '<leader>ff', toggle, { desc = 'Neotree - toggle', silent = true, noremap = true })
+
+    -- vim.api.nvim_create_user_command('J', toggle, {})
+
+    -- vim.keymap.set('n', '<C-h>', ':Neotree toggle position=float<cr>', { desc = 'Neotree - toggle', silent = true, noremap = true })
+    -- vim.keymap.set('n', '<C-g>', , { desc = 'Neotree - toggle', silent = true, noremap = true })
   end,
 }

@@ -6,54 +6,64 @@
 --   },
 --   ---@type RustaceanLspClientOpts
 --   server = {
---     on_attach = function(_, bufnr)
---       print 'Rust Analyzer is ready!'
---       -- Set keybindings, etc. here.
---       vim.keymap.set('n', 'K', function()
---         vim.cmd.RustLsp { 'hover', 'actions' }
---       end, { silent = true, buffer = bufnr, desc = 'Rust: Hover Actions' })
---
---       vim.keymap.set('n', '<leader>ca', function()
---         vim.cmd.RustLsp 'codeAction'
---       end, { silent = true, buffer = bufnr, desc = 'Rust: [C]ode [A]ction' })
+--     cmd = function()
+--       -- local mason_registry = require 'mason-registry'
+--       --
+--       -- -- local package = mason_registry.get_package 'rust-analyzer'
+--       -- local install_dir = package:get_install_path()
+--       -- find out where the binary is in the install dir, and append it to the install dir
+--       -- local ra_bin = install_dir .. '/' .. 'rust-analyzer.exe' -- this may need tweaking
+--       local ra_bin = vim.fn.stdpath 'data' .. '/mason/rust-analyzer'
+--       print('Rust Analyzer binary:', ra_bin)
+--       return { ra_bin } -- you can add additional args like `'--logfile', '/path/to/logfile'` to the list
 --     end,
---     settings = {
---       -- rust-analyzer language server configuration
---       ['rust-analyzer'] = {
---         -- cargo = {
---         --   allFeatures = true,
---         --   loadOutDirsFromCheck = true,
---         --   runBuildScripts = true,
---         -- },
---         -- checkOnSave = {
---         --   allFeatures = true,
---         --   command = 'clippy',
---         --   extraArgs = { '--no-deps' },
---         -- },
---         -- procMacro = {
---         --   enable = true,
---         --   ignored = {
---         --     ['async-trait'] = { 'async_trait' },
---         --     ['napi-derive'] = { 'napi' },
---         --     ['async-recursion'] = { 'async_recursion' },
---         --   },
---         -- },
---       },
---     },
---     ---@type RustaceanDapOpts
---     dap = {
---       autoload_configurations = false,
---       adapter = false,
---       configuration = false,
---       load_rust_types = false,
---       auto_generate_source_map = false,
---       add_dynamic_library_paths = false,
---       run_custom_build_command = false,
---     },
+--
+--     -- on_attach = function(_, bufnr)
+--     --   print 'Rust Analyzer is ready!'
+--     --   -- Set keybindings, etc. here.
+--     --   vim.keymap.set('n', 'K', function()
+--     --     vim.cmd.RustLsp { 'hover', 'actions' }
+--     --   end, { silent = true, buffer = bufnr, desc = 'Rust: Hover Actions' })
+--     --
+--     --   vim.keymap.set('n', '<leader>ca', function()
+--     --     vim.cmd.RustLsp 'codeAction'
+--     --   end, { silent = true, buffer = bufnr, desc = 'Rust: [C]ode [A]ction' })
+--     -- end,
+--     -- settings = {
+--     --   -- rust-analyzer language server configuration
+--     --   ['rust-analyzer'] = {
+--     --     -- cargo = {
+--     --     --   allFeatures = true,
+--     --     --   loadOutDirsFromCheck = true,
+--     --     --   runBuildScripts = true,
+--     --     -- },
+--     --     -- checkOnSave = {
+--     --     --   allFeatures = true,
+--     --     --   command = 'clippy',
+--     --     --   extraArgs = { '--no-deps' },
+--     --     -- },
+--     --     -- procMacro = {
+--     --     --   enable = true,
+--     --     --   ignored = {
+--     --     --     ['async-trait'] = { 'async_trait' },
+--     --     --     ['napi-derive'] = { 'napi' },
+--     --     --     ['async-recursion'] = { 'async_recursion' },
+--     --     --   },
+--     --     -- },
+--     --   },
+--     -- },
+--     -- ---@type RustaceanDapOpts
+--     -- dap = {
+--     --   autoload_configurations = false,
+--     --   adapter = false,
+--     --   configuration = false,
+--     --   load_rust_types = false,
+--     --   auto_generate_source_map = false,
+--     --   add_dynamic_library_paths = false,
+--     --   run_custom_build_command = false,
+--     -- },
 --   },
 -- }
-
--- vim.g.rustaceanvim = rustacean_opts
 
 return {
   -- {
@@ -65,6 +75,7 @@ return {
   -- },
   {
     'simrat39/rust-tools.nvim',
+    -- enabled = false,
     -- ft = "rust"
     config = function()
       local rt = require 'rust-tools'
@@ -72,7 +83,8 @@ return {
       rt.setup {
         server = {
           on_attach = function(_, bufnr)
-            CC_GLOBAL_LSP_ON_ATTACH(_, bufnr)
+            -- print('Rust Analyzer is ready!' .. vim.inspect(_))
+            -- CC_GLOBAL_LSP_ON_ATTACH(_, bufnr)
             -- Hover actions
             vim.keymap.del('n', 'K', { buffer = bufnr })
             vim.keymap.set('n', 'K', rt.hover_actions.hover_actions, { buffer = bufnr, desc = 'Rust: Hover Actions' })
@@ -106,14 +118,16 @@ return {
       --   })
     end,
   },
-  -- {
-  --   'mrcjkb/rustaceanvim',
-  --   version = '^3', -- Recommended
-  --   ft = { 'rust' },
-  --   -- -- enabled = false,
-  --   init = function()
-  --     -- Configure rustaceanvim here
-  --     -- vim.g.rustaceanvim = rustacean_opts
-  --   end,
-  -- },
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^4', -- Recommended
+    ft = { 'rust' },
+    -- event = 'VeryLazy',
+    enabled = false,
+    init = function()
+      -- Configure rustaceanvim here
+      -- vim.g.rustaceanvim = rustacean_opts
+      -- print('RustaceanVim is ready!' .. vim.inspect(vim.g.rustaceanvim))
+    end,
+  },
 }

@@ -26,25 +26,25 @@ vim.keymap.set('n', '<leader>se', function()
     end
 
     pickers
-        .new({}, {
-          prompt_title = 'Loaded Telescope Extensions',
-          finder = finders.new_table {
-            results = extensions,
-          },
-          sorter = sorters.get_generic_fuzzy_sorter(),
-          attach_mappings = function(_, map)
-            map('i', '<CR>', function(prompt_bufnr)
-              local selection = action_state.get_selected_entry()
-              actions.close(prompt_bufnr)
-              -- CC - let's try to run the extension as a command
-              pcall(function()
-                vim.cmd('Telescope ' .. selection[1])
-              end)
+      .new({}, {
+        prompt_title = 'Loaded Telescope Extensions',
+        finder = finders.new_table {
+          results = extensions,
+        },
+        sorter = sorters.get_generic_fuzzy_sorter(),
+        attach_mappings = function(_, map)
+          map('i', '<CR>', function(prompt_bufnr)
+            local selection = action_state.get_selected_entry()
+            actions.close(prompt_bufnr)
+            -- CC - let's try to run the extension as a command
+            pcall(function()
+              vim.cmd('Telescope ' .. selection[1])
             end)
-            return true
-          end,
-        })
-        :find()
+          end)
+          return true
+        end,
+      })
+      :find()
   end
 
   list_loaded_telescope_extensions()

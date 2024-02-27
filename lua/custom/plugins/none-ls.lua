@@ -21,7 +21,7 @@ local null_ls_config = function()
   null_ls.setup {
     -- debug = true,
     sources = {
-      null_ls.builtins.formatting.stylua,
+      -- null_ls.builtins.formatting.stylua,
       -- prettierd gets automatically installed by null-ls via Mason, no need to install it with npm.
       -- Initially, it wasn't working; running it from the command line I got an error about a missing /run/user/1000 directory
       -- I had to create it manually in my system:
@@ -57,6 +57,7 @@ end
 
 return {
   'jay-babu/mason-null-ls.nvim',
+  enabled = false,
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     'williamboman/mason.nvim',
