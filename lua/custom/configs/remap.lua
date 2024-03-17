@@ -22,7 +22,7 @@ vim.keymap.set('n', '<leader>df', function()
   local conform = require 'conform'
   conform.format {
     lsp_fallback = true,
-    -- timeout_ms = 5000,
+    timeout_ms = 500,
   }
 end, { desc = 'LSP: [D]ocument [F]ormat (CC)' })
 
@@ -50,3 +50,30 @@ vim.keymap.set(
 -- 	vim.cmd('silent !code -r -g ' .. filename .. ':' .. line .. ':' .. col)
 -- 	-- vim.cmd 'redraw!'
 -- end, { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>gP', function()
+  -- Get the clipboard content
+  local clipboard = vim.fn.getreg '+'
+
+  -- Split the clipboard content into file path, line, and column
+  local parts = {}
+  for part in string.gmatch(clipboard, '[^:]+') do
+    table.insert(parts, part)
+  end
+
+  local path = parts[1]
+  local line = parts[2]
+  local column = parts[3]
+
+  if line ~= nil then
+    -- Open the file at the specified line
+    vim.cmd('edit +' .. line .. ' ' .. path)
+  else
+    vim.cmd('edit ' .. path)
+  end
+
+  if column ~= nil then
+    -- Move to the specified column
+    vim.cmd('normal ' .. column .. '|')
+  end
+end, { desc = 'Edit the file [P]ath in the clipboard (CC)' })

@@ -18,7 +18,19 @@ local servers = {
   --    https://github.com/pmizio/typescript-tools.nvim
   --
   -- But for many setups, the LSP (`tsserver`) will work just fine
-  tsserver = {},
+  tsserver = {
+    capabilities = {
+      -- CC: leaves formatting to eslint, avoids double formatting
+      documentFormatting = false,
+      rangeFormatting = false,
+      formatting = false,
+      textDocument = {
+        formatting = false,
+      },
+      -- documentFormattingProvider = false,
+      -- rangeFormattingProvider = false,
+    },
+  },
   bashls = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
   templ = {},
@@ -32,30 +44,9 @@ local servers = {
     -- copied from tsserver on :LspInfo
     filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx' },
   },
+  -- CC: added for conform
+  eslind_d = nil,
   lemminx = {},
-  lua_ls = {
-    -- cmd = {...},
-    -- filetypes { ...},
-    -- capabilities = {},
-    settings = {
-      Lua = {
-        runtime = { version = 'LuaJIT' },
-        workspace = {
-          checkThirdParty = false,
-          -- Tells lua_ls where to find all the Lua files that you have loaded
-          -- for your neovim configuration.
-          library = {
-            '${3rd}/luv/library',
-            unpack(vim.api.nvim_get_runtime_file('', true)),
-          },
-          -- If lua_ls is really slow on your computer, you can try this instead:
-          -- library = { vim.env.VIMRUNTIME },
-        },
-        -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-        diagnostics = { disable = { 'missing-fields' } },
-      },
-    },
-  },
   taplo = {},
 }
 
