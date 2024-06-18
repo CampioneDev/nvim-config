@@ -19,16 +19,38 @@ local servers = {
   --
   -- But for many setups, the LSP (`tsserver`) will work just fine
   tsserver = {
-    capabilities = {
-      -- CC: leaves formatting to eslint, avoids double formatting
-      documentFormatting = false,
-      rangeFormatting = false,
-      formatting = false,
-      textDocument = {
-        formatting = false,
+    -- capabilities = {
+    --   documentFormatting = false,
+    --   rangeFormatting = false,
+    --   formatting = false,
+    --   textDocument = {
+    --     formatting = false,
+    --   },
+    settings = {
+      javascript = {
+        inlayHints = {
+          includeInlayEnumMemberValueHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all';
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayVariableTypeHints = true,
+          includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+        },
       },
-      -- documentFormattingProvider = false,
-      -- rangeFormattingProvider = false,
+      typescript = {
+        inlayHints = {
+          includeInlayEnumMemberValueHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayParameterNameHints = 'all', -- 'none' | 'literals' | 'all';
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayVariableTypeHints = true,
+          includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+        },
+      },
     },
   },
   bashls = {},
@@ -45,7 +67,7 @@ local servers = {
     filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx' },
   },
   -- CC: added for conform
-  eslind_d = nil,
+  -- eslind_d = nil,
   lemminx = {},
   taplo = {},
 }
@@ -56,6 +78,26 @@ local servers = {
 --   CC_LSP_SERVERS_ATTACH[server_name] = {}
 -- end
 
+local cc_js_filetypes = {
+  ['javascript'] = true,
+  ['javascriptreact'] = true,
+  ['javascript.jsx'] = true,
+  ['typescript'] = true,
+  ['typescriptreact'] = true,
+  ['typescript.tsx'] = true,
+}
+
 return {
   lsp_servers = servers,
+  custom_format_check = function(bufnr)
+    -- CC: since calling eslint_d from conform returns a timeout error lately,
+    -- and disabling the formatting capabilities of tsserver doesn't work
+    -- anymore, we check the current buffer and use EslintFixAll for all
+    -- relevant filetypes
+    if cc_js_filetypes[vim.bo[bufnr].filetype] then
+      vim.cmd 'EslintFixAll'
+      return true
+    end
+    return false
+  end,
 }

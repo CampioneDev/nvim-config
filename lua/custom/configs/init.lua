@@ -1,13 +1,14 @@
-vim.opt.relativenumber = true
+-- vim.opt.guicursor = ''
 
-vim.opt.guicursor = ''
+-- CC: already in init.lua
+-- vim.opt.relativenumber = true
 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
--- already in init.lua
+-- CC: already in init.lua
 -- vim.opt.splitbelow = true
 -- vim.opt.splitright = true
 vim.opt.wrap = false
