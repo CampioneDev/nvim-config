@@ -17,15 +17,6 @@ vim.keymap.set('n', '<leader>y', '"+y', { desc = 'Yank to clipboard (CC)' })
 vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Yank to clipboard (CC)' })
 vim.keymap.set('n', '<leader>Y', '"+Y', { desc = 'Yank to clipboard (CC)' })
 
-vim.keymap.set('n', '<leader>df', function()
-  -- vim.lsp.buf.format()
-  local conform = require 'conform'
-  conform.format {
-    lsp_fallback = true,
-    timeout_ms = 500,
-  }
-end, { desc = 'LSP: [D]ocument [F]ormat (CC)' })
-
 vim.keymap.set(
   'n',
   '<leader>gC',

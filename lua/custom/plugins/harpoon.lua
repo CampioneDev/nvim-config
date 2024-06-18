@@ -7,8 +7,11 @@ return {
       local ui = require 'harpoon.ui'
 
       local setup_size = function()
-        local win_width = vim.api.nvim_win_get_width(0)
-        local win_height = vim.api.nvim_win_get_height(0)
+        local win_width = vim.o.columns
+        local win_height = vim.o.lines
+        -- CC: these return the size of the current split window, not the entire window
+        -- local win_width = vim.api.nvim_win_get_width(0)
+        -- local win_height = vim.api.nvim_win_get_height(0)
         local width = (win_width > 100) and math.floor(win_width / 2) or (win_width - 10)
         local height = (win_height > 50) and math.floor(win_height / 2) or (win_height - 10)
 
