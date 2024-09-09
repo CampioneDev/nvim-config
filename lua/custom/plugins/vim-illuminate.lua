@@ -2,6 +2,7 @@ return {
   {
     -- https://github.com/RRethy/vim-illuminate
     -- https://www.lazyvim.org/plugins/editor#vim-illuminate
-    "RRethy/vim-illuminate",
-  }
+    'RRethy/vim-illuminate',
+    enabled = not vim.g.vscode,
+  },
 }

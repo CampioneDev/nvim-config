@@ -1,6 +1,7 @@
 return {
   {
     'folke/noice.nvim',
+    enabled = not vim.g.vscode,
     event = 'VeryLazy',
     opts = {
       -- add any options here
@@ -11,10 +12,25 @@ return {
       -- OPTIONAL:
       --   `nvim-notify` is only needed, if you want to use the notification view.
       --   If not available, we use `mini` as the fallback
-      'rcarriga/nvim-notify',
+      -- 'rcarriga/nvim-notify',
     },
     config = function()
       require('noice').setup {
+        cmdline = {
+          enabled = true,
+          view = 'cmdline',
+        },
+        messages = {
+          -- NOTE: If you enable messages, then the cmdline is enabled automatically.
+          -- This is a current Neovim limitation.
+          enabled = true, -- enables the Noice messages UI
+        },
+        popupmenu = {
+          enabled = false,
+        },
+        notify = {
+          enabled = false,
+        },
         lsp = {
           -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
           override = {
@@ -31,12 +47,12 @@ return {
           inc_rename = false, -- enables an input dialog for inc-rename.nvim
           lsp_doc_border = true, -- add a border to hover docs and signature help
         },
-        messages = {
-          -- NOTE: If you enable messages, then the cmdline is enabled automatically.
-          -- This is a current Neovim limitation.
-          enabled = false, -- enables the Noice messages UI
-        },
       }
+
+      require('telescope').load_extension 'noice'
     end,
+    keys = {
+      { '<leader>sm', '<cmd>Telescope noice<cr>', desc = '[S]earch [M]essages (CC)' },
+    },
   },
 }

@@ -99,10 +99,10 @@ vim.g.have_nerd_font = true
 --  For more options, you can see `:help option-list`
 
 -- Make line numbers default
-vim.opt.number = true
+vim.opt.number = not vim.g.vscode
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = true
+vim.opt.relativenumber = not vim.g.vscode
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -175,6 +175,9 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+-- CC: configs that are run before plugins are loaded
+require 'custom/configs'
+
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -237,27 +240,6 @@ require('lazy').setup({
   -- keys can be used to configure plugin behavior/loading/etc.
   --
   -- Use `opts = {}` to force a plugin to be loaded.
-  --
-
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        -- CC: copied from https://www.lazyvim.org/plugins/editor#gitsignsnvim
-        add = { text = '▎' },
-        change = { text = '▎' },
-        delete = { text = '' },
-        topdelete = { text = '' },
-        changedelete = { text = '▎' },
-        untracked = { text = '▎' },
-      },
-    },
-  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -276,49 +258,48 @@ require('lazy').setup({
 
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
+    enabled = not vim.g.vscode,
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-    config = function() -- This is the function that runs, AFTER loading
-      require('which-key').setup {
-        icons = {
-          -- set icon mappings to true if you have a Nerd Font
-          mappings = vim.g.have_nerd_font,
-          -- If you are using a Nerd Font: set icons.keys to an empty table which will use the
-          -- default whick-key.nvim defined Nerd Font icons, otherwise define a string table
-          keys = vim.g.have_nerd_font and {} or {
-            Up = '<Up> ',
-            Down = '<Down> ',
-            Left = '<Left> ',
-            Right = '<Right> ',
-            C = '<C-…> ',
-            M = '<M-…> ',
-            D = '<D-…> ',
-            S = '<S-…> ',
-            CR = '<CR> ',
-            Esc = '<Esc> ',
-            ScrollWheelDown = '<ScrollWheelDown> ',
-            ScrollWheelUp = '<ScrollWheelUp> ',
-            NL = '<NL> ',
-            BS = '<BS> ',
-            Space = '<Space> ',
-            Tab = '<Tab> ',
-            F1 = '<F1>',
-            F2 = '<F2>',
-            F3 = '<F3>',
-            F4 = '<F4>',
-            F5 = '<F5>',
-            F6 = '<F6>',
-            F7 = '<F7>',
-            F8 = '<F8>',
-            F9 = '<F9>',
-            F10 = '<F10>',
-            F11 = '<F11>',
-            F12 = '<F12>',
-          },
+    opts = {
+      icons = {
+        -- set icon mappings to true if you have a Nerd Font
+        mappings = vim.g.have_nerd_font,
+        -- If you are using a Nerd Font: set icons.keys to an empty table which will use the
+        -- default whick-key.nvim defined Nerd Font icons, otherwise define a string table
+        keys = vim.g.have_nerd_font and {} or {
+          Up = '<Up> ',
+          Down = '<Down> ',
+          Left = '<Left> ',
+          Right = '<Right> ',
+          C = '<C-…> ',
+          M = '<M-…> ',
+          D = '<D-…> ',
+          S = '<S-…> ',
+          CR = '<CR> ',
+          Esc = '<Esc> ',
+          ScrollWheelDown = '<ScrollWheelDown> ',
+          ScrollWheelUp = '<ScrollWheelUp> ',
+          NL = '<NL> ',
+          BS = '<BS> ',
+          Space = '<Space> ',
+          Tab = '<Tab> ',
+          F1 = '<F1>',
+          F2 = '<F2>',
+          F3 = '<F3>',
+          F4 = '<F4>',
+          F5 = '<F5>',
+          F6 = '<F6>',
+          F7 = '<F7>',
+          F8 = '<F8>',
+          F9 = '<F9>',
+          F10 = '<F10>',
+          F11 = '<F11>',
+          F12 = '<F12>',
         },
-      }
+      },
 
       -- Document existing key chains
-      require('which-key').add {
+      spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
@@ -326,8 +307,8 @@ require('lazy').setup({
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
-      }
-    end,
+      },
+    },
   },
 
   -- NOTE: Plugins can specify dependencies.
@@ -337,8 +318,9 @@ require('lazy').setup({
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
 
-  { -- Fuzzy Finder (files, lsp, etc)
+  { -- Fuzzy Finder (files, lsp, etc
     'nvim-telescope/telescope.nvim',
+    enabled = not vim.g.vscode,
     event = 'VimEnter',
     branch = '0.1.x',
     dependencies = {
@@ -383,6 +365,8 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local cc_telescope_extra = require 'custom.configs.telescope'
+
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
@@ -398,12 +382,7 @@ require('lazy').setup({
             require('telescope.themes').get_dropdown(),
           },
         },
-        -- CC
-        defaults = {
-          -- sorting_strategy = 'ascending',
-          path_display = { 'truncate' },
-          dynamic_preview_title = true,
-        },
+        defaults = cc_telescope_extra.setup.defaults,
       }
 
       -- Enable Telescope extensions if they are installed
@@ -445,6 +424,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- CC: extra config
+      cc_telescope_extra.config_post()
     end,
   },
 
@@ -453,6 +435,7 @@ require('lazy').setup({
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis
     'folke/lazydev.nvim',
+    enabled = not vim.g.vscode,
     ft = 'lua',
     opts = {
       library = {
@@ -465,6 +448,7 @@ require('lazy').setup({
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
+    enabled = not vim.g.vscode,
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
@@ -473,10 +457,18 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      {
+        'j-hui/fidget.nvim',
+        opts = {
+          -- CC: catppuccin integration
+          notification = { window = { winblend = 0 } },
+        },
+      },
 
       -- Allows extra capabilities provided by nvim-cmp
-      'hrsh7th/cmp-nvim-lsp',
+      {
+        'hrsh7th/cmp-nvim-lsp',
+      },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -755,12 +747,24 @@ require('lazy').setup({
             },
           },
         },
+        -- CC: https://github.com/stevearc/conform.nvim/blob/master/doc/formatter_options.md#injected
+        injected = {
+          -- Set the options field
+          options = {
+            -- Set individual option values
+            ignore_errors = true,
+            lang_to_formatters = {
+              json = { 'jq' },
+            },
+          },
+        },
       },
     },
   },
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
+    enabled = not vim.g.vscode,
     event = 'InsertEnter',
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
@@ -895,7 +899,7 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  { 'folke/todo-comments.nvim', enabled = not vim.g.vscode, event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -937,6 +941,7 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    enabled = not vim.g.vscode,
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -1015,5 +1020,3 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
-
-require 'custom/configs'

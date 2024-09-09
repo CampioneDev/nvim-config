@@ -1,3 +1,6 @@
 return {
-  { "cdelledonne/vim-cmake" }
+  {
+    'cdelledonne/vim-cmake',
+    enabled = not vim.g.vscode,
+  },
 }
