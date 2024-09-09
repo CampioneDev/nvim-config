@@ -68,3 +68,21 @@ vim.keymap.set('n', '<leader>gP', function()
     vim.cmd('normal ' .. column .. '|')
   end
 end, { desc = 'Edit the file [P]ath in the clipboard (CC)' })
+
+vim.keymap.set('n', '<leader>wC', function()
+  -- Close all buffers except the ones in currently visible windows
+  local open_buffers = {}
+
+  -- Collect buffers from all open windows
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    open_buffers[buf] = true
+  end
+
+  -- Iterate over all buffers and close the ones not in visible windows
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if not open_buffers[buf] then
+      vim.api.nvim_buf_delete(buf, { force = true })
+    end
+  end
+end, { desc = 'Close all unshown buffers (CC)' })
