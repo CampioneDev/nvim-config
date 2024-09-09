@@ -1,8 +1,9 @@
 return {
   {
-    "NvChad/nvim-colorizer.lua",
+    'NvChad/nvim-colorizer.lua',
+    enabled = not vim.g.vscode,
     config = function()
-      require 'colorizer'.setup({})
-    end
-  }
+      require('colorizer').setup {}
+    end,
+  },
 }

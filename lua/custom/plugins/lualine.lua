@@ -1,7 +1,7 @@
 return {
   {
     'nvim-lualine/lualine.nvim',
-    -- enabled = false,
+    enabled = not vim.g.vscode,
     opts = {
       options = {
         icons_enabled = true,

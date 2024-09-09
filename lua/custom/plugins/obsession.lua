@@ -1,3 +1,6 @@
 return {
-  { "tpope/vim-obsession" }
+  {
+    'tpope/vim-obsession',
+    enabled = not vim.g.vscode,
+  },
 }

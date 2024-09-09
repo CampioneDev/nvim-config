@@ -5,6 +5,8 @@ local config = wezterm.config_builder()
 
 local is_windows = package.config:sub(1, 1) == '\\'
 
+local emulate_tmux = true
+
 config.initial_cols = 132
 config.initial_rows = 43
 -- config.window_decorations = "RESIZE"
@@ -14,17 +16,16 @@ config.window_padding = {
   top = '0cell',
   bottom = '0cell',
 }
-config.window_background_opacity = 0
+config.window_background_opacity = is_windows and 0 or 0.975
 config.win32_system_backdrop = 'Mica'
 
-config.tab_bar_at_bottom = true
--- config.hide_tab_bar_if_only_one_tab = true
+config.hide_tab_bar_if_only_one_tab = emulate_tmux == false
 config.use_fancy_tab_bar = false
 
 config.color_scheme = 'Catppuccin Mocha'
 config.bold_brightens_ansi_colors = 'BrightAndBold'
 
-config.font_size = 9.0
+config.font_size = is_windows and 9.0 or 12.0
 config.font = wezterm.font('JetBrains Mono', { weight = 'Medium' })
 config.font_rules = {
   {
@@ -35,6 +36,15 @@ config.font_rules = {
     },
   },
   {
+    italic = true,
+    -- intensity = "Half",
+    font = wezterm.font {
+      family = 'JetBrains Mono',
+      -- weight = "Medium",
+      style = 'Italic',
+    },
+  },
+  {
     intensity = 'Bold',
     font = wezterm.font {
       family = 'JetBrains Mono',
@@ -42,11 +52,11 @@ config.font_rules = {
     },
   },
   {
+    intensity = 'Bold',
     italic = true,
-    -- intensity = "Half",
     font = wezterm.font {
       family = 'JetBrains Mono',
-      -- weight = "Medium",
+      weight = 'ExtraBold',
       style = 'Italic',
     },
   },
@@ -59,23 +69,28 @@ config.font_rules = {
 --   -- active_titlebar_bg = "#333333",
 -- }
 
-if is_windows then
-  local cwd_path = os.getenv 'CAMPIONE_PROJECTS_PATH' or os.getenv 'PROFILE'
-  config.default_prog = { 'pwsh.exe', '-wd', cwd_path }
+if emulate_tmux then
+  if is_windows then
+    -- local cwd_path = os.getenv 'CAMPIONE_PROJECTS_PATH' or os.getenv 'PROFILE'
+    config.default_prog = { 'pwsh.exe', '-NoLogo' } -- , '-wd', cwd_path }
+  end
 
-  -- CC: emulate tmux in windows
+  config.tab_bar_at_bottom = true
+
   config.leader = { key = 'b', mods = 'CTRL' }
   config.disable_default_key_bindings = true
   config.keys = {
     -- Send "CTRL-B" to the terminal when pressing CTRL-B, CTRL-B
     { key = 'b', mods = 'LEADER|CTRL', action = act { SendString = '\x02' } },
+    { key = ':', mods = 'LEADER|SHIFT', action = act.ActivateCommandPalette },
+    { key = 'R', mods = 'LEADER|SHIFT', action = act.ReloadConfiguration },
     {
-      key = '%',
+      key = '"',
       mods = 'LEADER|SHIFT',
       action = act { SplitVertical = { domain = 'CurrentPaneDomain' } },
     },
     {
-      key = '"',
+      key = '%',
       mods = 'LEADER|SHIFT',
       action = act { SplitHorizontal = { domain = 'CurrentPaneDomain' } },
     },
@@ -98,8 +113,8 @@ if is_windows then
     { key = '7', mods = 'LEADER', action = act { ActivateTab = 6 } },
     { key = '8', mods = 'LEADER', action = act { ActivateTab = 7 } },
     { key = '9', mods = 'LEADER', action = act { ActivateTab = 8 } },
-    { key = 'p', mods = 'LEADER', action = act.ActivateTabRelative(-1) },
-    { key = 'n', mods = 'LEADER', action = act.ActivateTabRelative(1) },
+    { key = 'p', mods = 'LEADER|CTRL', action = act.ActivateTabRelative(-1) },
+    { key = 'n', mods = 'LEADER|CTRL', action = act.ActivateTabRelative(1) },
     { key = 'b', mods = 'LEADER', action = act.ActivateLastTab },
     { key = 'x', mods = 'LEADER', action = act { CloseCurrentPane = { confirm = true } } },
     -- { key = "&", mods = "LEADER|SHIFT", action = act({ CloseCurrentTab = { confirm = true } }) },
@@ -109,12 +124,78 @@ if is_windows then
     { key = '[', mods = 'LEADER', action = act.ActivateCopyMode },
 
     -- { key = "n", mods = "SHIFT|CTRL", action = "ToggleFullScreen" },
-    -- { key = "v", mods = "SHIFT|CTRL", action = act.PasteFrom("Clipboard") },
-    -- { key = "c", mods = "SHIFT|CTRL", action = act.CopyTo("Clipboard") },
+    { key = 'v', mods = 'SHIFT|CTRL', action = act.PasteFrom 'Clipboard' },
+    { key = 'c', mods = 'SHIFT|CTRL', action = act.CopyTo 'Clipboard' },
     -- { key = "+", mods = "SHIFT|CTRL", action = "IncreaseFontSize" },
     -- { key = "-", mods = "SHIFT|CTRL", action = "DecreaseFontSize" },
     -- { key = "0", mods = "SHIFT|CTRL", action = "ResetFontSize" },
   }
+
+  --- smart-splits
+
+  local smart_splits = wezterm.plugin.require 'https://github.com/mrjones2014/smart-splits.nvim'
+
+  smart_splits.apply_to_config(config, {
+    -- the default config is here, if you'd like to use the default keys,
+    -- you can omit this configuration table parameter and just use
+    -- smart_splits.apply_to_config(config)
+
+    -- directional keys to use in order of: left, down, up, right
+    direction_keys = { 'h', 'j', 'k', 'l' },
+    -- if you want to use separate direction keys for move vs. resize, you
+    -- can also do this:
+    -- direction_keys = {
+    --   move = { 'h', 'j', 'k', 'l' },
+    --   resize = { 'LeftArrow', 'DownArrow', 'UpArrow', 'RightArrow' },
+    -- },
+    -- modifier keys to combine with direction_keys
+    modifiers = {
+      move = 'CTRL', -- modifier to use for pane movement, e.g. CTRL+h to move left
+      resize = 'META', -- modifier to use for pane resize, e.g. META+h to resize to the left
+    },
+  })
+
+  ---
+
+  local resurrect = wezterm.plugin.require 'https://github.com/MLFlexer/resurrect.wezterm'
+
+  for _, binding in ipairs {
+    {
+      key = 's',
+      mods = 'LEADER|CTRL',
+      action = wezterm.action_callback(function(_, _)
+        resurrect.save_state(resurrect.workspace_state.get_workspace_state())
+      end),
+    },
+    {
+      key = 'r',
+      mods = 'LEADER|CTRL',
+      action = wezterm.action_callback(function(win, pane)
+        resurrect.fuzzy_load(win, pane, function(id, _)
+          local type = string.match(id, '^([^/]+)') -- match before '/'
+          id = string.match(id, '([^/]+)$') -- match after '/'
+          id = string.match(id, '(.+)%..+$') -- remove file extention
+          local opts = {
+            relative = true,
+            restore_text = true,
+            on_pane_restore = resurrect.tab_state.default_on_pane_restore,
+          }
+          if type == 'workspace' then
+            local state = resurrect.load_state(id, 'workspace')
+            resurrect.workspace_state.restore_workspace(state, opts)
+          elseif type == 'window' then
+            local state = resurrect.load_state(id, 'window')
+            resurrect.window_state.restore_window(pane:window(), state, opts)
+          elseif type == 'tab' then
+            local state = resurrect.load_state(id, 'tab')
+            resurrect.tab_state.restore_tab(pane:tab(), state, opts)
+          end
+        end)
+      end),
+    },
+  } do
+    table.insert(config.keys, binding)
+  end
 end
 
 return config

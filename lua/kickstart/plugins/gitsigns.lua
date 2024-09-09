@@ -5,6 +5,7 @@
 return {
   {
     'lewis6991/gitsigns.nvim',
+    enabled = not vim.g.vscode,
     opts = {
       on_attach = function(bufnr)
         local gitsigns = require 'gitsigns'
@@ -56,6 +57,15 @@ return {
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
         map('n', '<leader>tD', gitsigns.toggle_deleted, { desc = '[T]oggle git show [D]eleted' })
       end,
+      signs = {
+        -- CC: copied from https://www.lazyvim.org/plugins/editor#gitsignsnvim
+        add = { text = '▎' },
+        change = { text = '▎' },
+        delete = { text = '' },
+        topdelete = { text = '' },
+        changedelete = { text = '▎' },
+        untracked = { text = '▎' },
+      },
     },
   },
 }

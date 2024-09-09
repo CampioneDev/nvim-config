@@ -1,5 +1,6 @@
 return {
   'utilyre/barbecue.nvim',
+  enabled = not vim.g.vscode,
   name = 'barbecue',
   version = '*',
   dependencies = {

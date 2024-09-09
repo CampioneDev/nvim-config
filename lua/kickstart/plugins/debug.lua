@@ -9,6 +9,7 @@
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
+  enabled = not vim.g.vscode,
   -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
@@ -35,6 +36,8 @@ return {
   keys = function(_, keys)
     local dap = require 'dap'
     local dapui = require 'dapui'
+    local daputils = require 'dap.utils'
+
     return {
       -- Basic debugging keymaps, feel free to change to your liking!
       { '<F5>', dap.continue, desc = 'Debug: Start/Continue' },
@@ -51,6 +54,44 @@ return {
       },
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
       { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
+      -- CC:
+      {
+        '<S-F5>',
+        function()
+          local cc_telescope_extra = require 'custom.configs.telescope'
+          cc_telescope_extra.open_process_picker(function(process)
+            -- if vim.fn.has 'win32' == 0 then
+            dap.run {
+              type = 'codelldb',
+              request = 'attach',
+              name = 'Attach',
+              pid = process.pid,
+            }
+            -- CC: I can't make it work, nobody does.
+            -- else
+            --   dap.run {
+            --     type = 'cppdbg',
+            --     request = 'attach',
+            --     name = 'Attach to process',
+            --     program = process.name,
+            --     processId = process.pid,
+            --     cwd = '${workspaceFolder}',
+            --     -- runInTerminal = false,
+            --     -- args = {},
+            --     stopAtEntry = false,
+            --     setupCommands = {
+            --       {
+            --         description = 'Enable pretty-printing',
+            --         text = '-enable-pretty-printing',
+            --         ignoreFailures = true,
+            --       },
+            --     },
+            --   }
+            -- end
+          end)
+        end,
+        desc = 'Debug: Pick process (CC)',
+      },
       unpack(keys),
     }
   end,
@@ -73,6 +114,7 @@ return {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
         'codelldb',
+        -- 'cpptools',
         'js-debug-adapter',
       },
     }
@@ -116,5 +158,18 @@ return {
 
     -- CC: json5 support for launch.json (`:h dap-launch.json`)
     require('dap.ext.vscode').json_decode = require('json5').parse
+
+    -- if vim.fn.has 'win32' == 1 then
+    --   dap.set_log_level 'TRACE'
+    --   -- CC: rust in windows with cppvsdbg
+    --   dap.adapters.cppdbg = {
+    --     id = 'cppdbg',
+    --     type = 'executable',
+    --     command = vim.fn.stdpath 'data' .. '\\mason\\packages\\cpptools\\extension\\debugAdapters\\bin\\OpenDebugAD7.exe',
+    --     options = {
+    --       detached = false,
+    --     },
+    --   }
+    -- end
   end,
 }

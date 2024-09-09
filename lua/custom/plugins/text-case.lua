@@ -3,13 +3,16 @@ return {
   dependencies = { 'nvim-telescope/telescope.nvim' },
   config = function()
     require('textcase').setup {}
-    require('telescope').load_extension 'textcase'
+
+    if not vim.g.vscode then
+      require('telescope').load_extension 'textcase'
+    end
   end,
   keys = {
     'ga', -- Default invocation prefix
-    { 'ga.', '<cmd>TextCaseOpenTelescope<CR>', mode = { 'n', 'x' }, desc = 'Telescope' },
+    not vim.g.vscode and { 'ga.', '<cmd>TextCaseOpenTelescope<CR>', mode = { 'n', 'x' }, desc = 'Telescope' } or nil,
   },
-  cmd = {
+  cmd = not vim.g.vscode and {} or {
     -- NOTE: The Subs command name can be customized via the option "substitude_command_name"
     'Subs',
     'TextCaseOpenTelescope',
