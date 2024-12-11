@@ -3,6 +3,10 @@ local act = wezterm.action
 
 local config = wezterm.config_builder()
 
+-- CC: it doesn't make any sense to me since my monitor is 60 Hz, but...
+-- https://www.reddit.com/r/neovim/comments/1gthknw/wezterm_max_fps_240_is_crazy/
+config.max_fps = 240
+
 local is_windows = package.config:sub(1, 1) == '\\'
 
 local emulate_tmux = true
@@ -27,6 +31,15 @@ config.bold_brightens_ansi_colors = 'BrightAndBold'
 
 config.font_size = is_windows and 9.0 or 12.0
 config.font = wezterm.font('JetBrains Mono', { weight = 'Medium' })
+
+-- CC: this affects the command palette (and the fancy bar if enabled)
+config.window_frame = {
+  font = config.font,
+  --   font_size = 8.0,
+  --   active_titlebar_bg = "#333333",
+}
+config.command_palette_font_size = config.font_size
+
 config.font_rules = {
   {
     intensity = 'Normal',
@@ -61,13 +74,6 @@ config.font_rules = {
     },
   },
 }
-
--- This would affect the fancy tab bar
--- config.window_frame = {
---   font = wezterm.font { family = 'JetBrainsMono Nerd Font', weight = 'Bold' },
---   font_size = 8.0,
---   -- active_titlebar_bg = "#333333",
--- }
 
 if emulate_tmux then
   if is_windows then
@@ -193,9 +199,51 @@ if emulate_tmux then
         end)
       end),
     },
+    {
+      key = 'd',
+      mods = 'LEADER|CTRL',
+      action = wezterm.action_callback(function(win, pane)
+        resurrect.fuzzy_load(win, pane, function(id)
+          resurrect.delete_state(id)
+        end, {
+          title = 'Delete State',
+          description = 'Select State to Delete and press Enter = accept, Esc = cancel, / = filter',
+          fuzzy_description = 'Search State to Delete: ',
+          is_fuzzy = true,
+        })
+      end),
+    },
   } do
     table.insert(config.keys, binding)
   end
+
+  local workspace_switcher = wezterm.plugin.require 'https://github.com/MLFlexer/smart_workspace_switcher.wezterm'
+
+  ---@diagnostic disable-next-line: unused-local
+  wezterm.on('augment-command-palette', function(window, pane)
+    local workspace_state = resurrect.workspace_state
+    return {
+      {
+        brief = 'Window | Workspace: Switch Workspace',
+        icon = 'md_briefcase_arrow_up_down',
+        action = workspace_switcher.switch_workspace(),
+      },
+      {
+        brief = 'Window | Workspace: Rename Workspace',
+        icon = 'md_briefcase_edit',
+        action = wezterm.action.PromptInputLine {
+          description = 'Enter new name for workspace',
+          ---@diagnostic disable-next-line: unused-local
+          action = wezterm.action_callback(function(window, pane, line)
+            if line then
+              wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
+              resurrect.save_state(workspace_state.get_workspace_state())
+            end
+          end),
+        },
+      },
+    }
+  end)
 end
 
 return config
