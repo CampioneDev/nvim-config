@@ -17,7 +17,7 @@ return {
     branch = 'main',
     dependencies = {
       { 'github/copilot.vim' },
-      { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
+      { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log wrapper
     },
     build = vim.fn.has 'win32' == 0 and 'make tiktoken' or nil, -- Only on MacOS or Linux
     opts = {
@@ -26,7 +26,7 @@ return {
     config = function()
       local chat = require 'CopilotChat'
       chat.setup {}
-      vim.keymap.set('n', '<leader>tc', function()
+      vim.keymap.set('n', '<leader>at', function()
         chat.toggle()
       end, { desc = '[T]oggle Copilot [C]hat (CC)', noremap = true, silent = true })
     end,

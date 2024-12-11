@@ -3,7 +3,29 @@ vim.keymap.set('n', '<leader>fv', function()
   vim.g.netrw_liststyle = 3
   vim.g.netrw_hide = 0
   vim.cmd '20Lexplore'
-end, { desc = 'Netrw - Left explorer toggle (CC)' })
+end, { desc = 'Netrw - Left explorer toggle (CC)', silent = true })
+
+vim.keymap.set('n', '<leader>fe', function()
+  OpenDirectoryInFileManager()
+end, { desc = 'Open current dir in default file manager (CC)', noremap = true, silent = true })
+
+function OpenDirectoryInFileManager()
+  ---@diagnostic disable-next-line
+  local os_name = vim.loop.os_uname().sysname
+  local command = ''
+
+  local dir = vim.fn.expand '%:p:h'
+
+  if os_name == 'Windows_NT' then
+    command = 'explorer.exe ' .. dir:gsub('/', '\\')
+  elseif os_name == 'Darwin' then
+    command = 'open ' .. dir
+  else
+    command = 'xdg-open ' .. dir
+  end
+
+  vim.fn.system(command)
+end
 
 return {
   {
