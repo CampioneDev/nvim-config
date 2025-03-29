@@ -1,7 +1,7 @@
 return {
   {
     'github/copilot.vim',
-    enabled = not vim.g.vscode,
+    enabled = false, -- not vim.g.vscode,
     config = function()
       -- vim.g.copilot_assume_mapped = true
       vim.keymap.set('i', '<C-J>', 'copilot#Accept("<CR>")', {
@@ -33,7 +33,7 @@ return {
   },
   {
     'supermaven-inc/supermaven-nvim',
-    enabled = false,
+    enabled = true,
     config = function()
       require('supermaven-nvim').setup {
         disable_keymaps = true,

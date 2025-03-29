@@ -1,8 +1,7 @@
--- CC: saving sessions in Windows is faulty when it comes to terminal
--- buffers, because it saves the full path of `pwsh` (or whatever), and
--- spaces in the path (e.g. `Program Files`) break the session file. We fix
--- that by modifying the session file, removing the path and keeping the
--- command only.
+-- CC: saving sessions in Windows is faulty when it comes to terminal buffers,
+-- because it saves the full path of `pwsh` (or whatever), and spaces in the
+-- path (e.g. `Program Files`) break the session file. We fix that by modifying
+-- the session file, removing the path and keeping the command only.
 
 local function simplify_terminal_paths_in_session_file(session_file)
   local lines = {}
