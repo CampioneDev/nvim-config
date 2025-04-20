@@ -58,7 +58,7 @@ function Enable-DevPowerShell {
     }
 }
 
-Enable-DevPowerShell
+# Enable-DevPowerShell
 
 function PwdCopy {
     (Get-Location).Path | Set-Clipboard

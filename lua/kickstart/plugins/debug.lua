@@ -19,7 +19,7 @@ return {
     'nvim-neotest/nvim-nio',
 
     -- Installs the debug adapters for you
-    'williamboman/mason.nvim',
+    'mason-org/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
 
     'theHamsta/nvim-dap-virtual-text',
@@ -30,7 +30,7 @@ return {
     {
       -- CC: json5 support for launch.json (`:h dap-launch.json`)
       'Joakker/lua-json5',
-      build = vim.fn.has 'win32' == 1 and 'powershell ./install.ps1' or './install.sh',
+      build = { vim.fn.has 'win32' == 1 and 'pwsh ./install.ps1' or './install.sh', 'cargo clean' },
     },
   },
   keys = {
@@ -199,6 +199,8 @@ return {
 
     -- CC: json5 support for launch.json (`:h dap-launch.json`)
     require('dap.ext.vscode').json_decode = require('json5').parse
+
+    require('custom.dap').dap_node()
 
     -- if vim.fn.has 'win32' == 1 then
     --   dap.set_log_level 'TRACE'

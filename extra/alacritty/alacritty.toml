@@ -34,7 +34,7 @@ save_to_clipboard = true
 program = "pwsh"
 
 [window]
-decorations = "none"
+# decorations = "none"
 dynamic_padding = true
 dynamic_title = true
 opacity = 0.975
