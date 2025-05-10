@@ -737,6 +737,7 @@ require('lazy').setup({
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
+        automatic_enable = true,
         handlers = {
           function(server_name)
             local server = servers[server_name] -- or {}
@@ -764,9 +765,6 @@ require('lazy').setup({
       {
         '<leader>df',
         function()
-          if require('custom.lsp').custom_format_check(vim.api.nvim_get_current_buf()) then
-            return
-          end
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
         mode = '',
@@ -776,10 +774,6 @@ require('lazy').setup({
     opts = {
       notify_on_error = true,
       format_on_save = function(bufnr)
-        if require('custom.lsp').custom_format_check(bufnr) then
-          return
-        end
-
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
