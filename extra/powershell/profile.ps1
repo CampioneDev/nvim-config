@@ -2,6 +2,11 @@ if (Get-Command -Name oh-my-posh -ErrorAction SilentlyContinue) {
     oh-my-posh init pwsh | Invoke-Expression
 }
 
+function which {
+    param([string]$Command)
+    $(Get-Command -Name $Command -CommandType Application -ErrorAction SilentlyContinue).Source
+}
+
 # https://yazi-rs.github.io/docs/quick-start/#shell-wrapper
 function y {
     $tmp = [System.IO.Path]::GetTempFileName()
@@ -62,4 +67,20 @@ function Enable-DevPowerShell {
 
 function PwdCopy {
     (Get-Location).Path | Set-Clipboard
+}
+
+function Get-PEHeaderArchitecture {
+    param([string]$Path)
+
+    $bytes = [System.IO.File]::ReadAllBytes($Path)
+    $offset = [BitConverter]::ToUInt32($bytes, 0x3C)
+    $machine = [BitConverter]::ToUInt16($bytes, $offset + 4)
+
+    switch ($machine) {
+        0x014c { "x86" }
+        0x8664 { "x64" }
+        0x01c0 { "ARM" }
+        0xAA64 { "ARM64" }
+        default { "Unknown (0x{0:X4})" -f $machine }
+    }
 }

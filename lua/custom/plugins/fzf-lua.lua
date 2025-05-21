@@ -1,5 +1,7 @@
 return {
   'ibhagwan/fzf-lua',
+  -- like telescope
+  event = 'VimEnter',
   enabled = not vim.g.vscode,
   -- optional for icon support
   dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -17,4 +19,10 @@ return {
       desc = 'fzf-lua: builtin',
     },
   },
+  config = function()
+    local fzf = require 'fzf-lua'
+    fzf.setup { 'telescope' }
+
+    vim.cmd 'FzfLua register_ui_select'
+  end,
 }

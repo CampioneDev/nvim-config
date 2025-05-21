@@ -1,5 +1,6 @@
 local config_post = function()
   local builtin = require 'telescope.builtin'
+  local fzf = require 'fzf-lua'
 
   vim.keymap.set('n', '<leader>sW', function()
     builtin.grep_string { search = vim.fn.input 'Grep > ' }
@@ -51,7 +52,7 @@ local config_post = function()
 
   vim.keymap.set('n', '<leader>sF', find_files_with_glob, { desc = '[S]earch [F]iles with glob pattern (CC)' })
 
-  vim.keymap.set('n', '<leader>sk', require('telescope.builtin').keymaps, { desc = '[S]earch [K]eymaps (CC)' })
+  vim.keymap.set('n', '<leader>sk', fzf.keymaps, { desc = '[S]earch [K]eymaps (CC)' })
 
   -- vim.keymap.set('n', '<leader>se', function()
   --   local telescope = require 'telescope'

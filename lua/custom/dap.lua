@@ -3,27 +3,6 @@
 
 local dap_node = function()
   local dap = require 'dap'
-  local pkg = require('mason-registry').get_package 'js-debug-adapter'
-  -- local receipt_opt = pkg.get_receipt(pkg)
-  --
-  -- ---@type InstallReceipt?
-  -- local receipt
-  --
-  -- ---@type InstallReceipt
-  -- receipt_opt.if_present(receipt_opt, function(r)
-  --   receipt = r
-  -- end)
-  --
-  -- if not receipt then
-  --   return
-  -- end
-  --
-  -- ---@type string?
-  -- local cmd = select(2, next(receipt.links.bin or {}))
-  --
-  -- if not cmd then
-  --   return
-  -- end
 
   if not dap.adapters['pwa-node'] then
     require('dap').adapters['pwa-node'] = {
@@ -32,13 +11,10 @@ local dap_node = function()
       port = '${port}',
       executable = {
         command = 'node',
-        -- 💀 Make sure to update this path to point to your installation
         args = {
-          pkg.get_install_path(pkg) .. '/js-debug/src/dapDebugServer.js',
+          vim.fn.expand '$MASON/packages/js-debug-adapter/js-debug/src/dapDebugServer.js',
           '${port}',
         },
-        -- command = cmd,
-        -- args = { '${port}' },
       },
     }
   end

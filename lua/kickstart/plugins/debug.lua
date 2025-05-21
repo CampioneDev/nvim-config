@@ -141,7 +141,7 @@ return {
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
-        'delve',
+        -- 'delve',
         'codelldb',
         -- 'cpptools',
         'js-debug-adapter',
@@ -198,7 +198,10 @@ return {
     }
 
     -- CC: json5 support for launch.json (`:h dap-launch.json`)
-    require('dap.ext.vscode').json_decode = require('json5').parse
+    local ok, json5 = pcall(require, 'json5')
+    if ok then
+      require('dap.ext.vscode').json_decode = json5.parse
+    end
 
     require('custom.dap').dap_node()
 
