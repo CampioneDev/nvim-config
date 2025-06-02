@@ -4,7 +4,7 @@ return {
   version = '*',
   dependencies = 'nvim-tree/nvim-web-devicons',
   config = function()
-    local catppuccin_highlights = require('catppuccin.groups.integrations.bufferline').get {
+    local catppuccin_highlights = require('catppuccin.special.bufferline').get_theme {
       -- custom = {
       --   all = {
       --     separator = {
