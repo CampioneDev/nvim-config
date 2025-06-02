@@ -197,7 +197,7 @@ require 'custom/configs'
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
--- CC: we use `nvim-tmux-navigation`
+-- CC: we use `smart-splits.nvim` instead
 -- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 -- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 -- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
@@ -804,17 +804,30 @@ require('lazy').setup({
           }
         end
       end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        css = { 'prettierd' },
-        scss = { 'prettierd' },
-        sql = { 'sql_formatter' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      },
+      formatters_by_ft = (function()
+        local mi = require('custom.lsp').mason_installed
+        local f = {
+          lua = { 'stylua' },
+          -- Conform can also run multiple formatters sequentially
+          python = { mi 'isort', mi 'black' },
+          --
+          -- You can use 'stop_after_first' to run the first available formatter from the list
+          -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        }
+
+        local prettier_installed = vim.fn.executable 'prettierd' == 1
+        if prettier_installed then
+          f['css'] = { 'prettierd' }
+          f['scss'] = { 'prettierd' }
+          f['json'] = { 'prettierd' }
+        end
+        local sql_formatter_installed = vim.fn.executable 'sql-formatter' == 1 and mi 'sql_formatter' ~= nil
+        if sql_formatter_installed then
+          f['sql'] = { 'sql_formatter' }
+        end
+
+        return f
+      end)(),
       -- log_level = vim.log.levels.TRACE,
       formatters = {
         sql_formatter = {

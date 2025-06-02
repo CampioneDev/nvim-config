@@ -26,7 +26,7 @@ return {
     config = function()
       local chat = require 'CopilotChat'
       chat.setup {}
-      vim.keymap.set('n', '<leader>at', function()
+      vim.keymap.set('n', '<leader>tc', function()
         chat.toggle()
       end, { desc = '[T]oggle Copilot [C]hat (CC)', noremap = true, silent = true })
     end,

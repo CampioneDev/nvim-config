@@ -1,3 +1,5 @@
+local M = {}
+
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
@@ -7,10 +9,10 @@
 --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
 --  - settings (table): Override the default settings passed when initializing the server.
 --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-local servers = {
+M.lsp_servers = {
   clangd = {},
   gopls = {},
-  -- pyright = {},
+  pyright = {},
   rust_analyzer = nil,
   -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
   --
@@ -25,12 +27,18 @@ local servers = {
   cssls = {},
   jsonls = {},
   eslint = {},
-  -- CC: added for conform
-  -- eslind_d = nil,
   lemminx = {},
   taplo = {},
 }
 
-return {
-  lsp_servers = servers,
-}
+local uv = vim.uv or vim.loop
+
+local mason_root = vim.fs.joinpath(vim.fn.stdpath 'data', 'mason')
+local pkgs_dir = vim.fs.joinpath(mason_root, 'packages')
+
+--- if installed, returns the name
+function M.mason_installed(name)
+  return uv.fs_stat(vim.fs.joinpath(pkgs_dir, name)) and name or nil
+end
+
+return M
