@@ -90,3 +90,22 @@ vim.keymap.set('n', '<leader>wC', function()
     end
   end
 end, { desc = 'Close all unshown buffers (CC)' })
+
+vim.keymap.set('x', '//', function()
+  local esc = vim.fn.escape
+  local getreg = vim.fn.getreg
+  local setreg = vim.fn.setreg
+
+  -- Save current unnamed register
+  local save_reg = getreg '"'
+  vim.cmd 'normal! "zy' -- yank visual selection into "z
+  local selection = esc(getreg 'z', [[\/]])
+  vim.cmd 'normal! gv' -- reselect last visual selection (optional)
+  vim.cmd("let @/ = '" .. selection .. "'") -- set search register
+  setreg('"', save_reg) -- restore unnamed register
+
+  -- Force exit visual mode
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+
+  -- vim.cmd 'normal! n' -- go to next match
+end, { noremap = true, silent = true, desc = 'Search visual selection' })

@@ -10,7 +10,7 @@
 local servers = {
   clangd = {},
   gopls = {},
-  -- pyright = {},
+  pyright = {},
   rust_analyzer = nil,
   -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
   --
@@ -25,8 +25,6 @@ local servers = {
   cssls = {},
   jsonls = {},
   eslint = {},
-  -- CC: added for conform
-  -- eslind_d = nil,
   lemminx = {},
   taplo = {},
 }
