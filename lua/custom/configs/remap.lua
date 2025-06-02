@@ -15,14 +15,14 @@ end
 -- greatest remap ever
 vim.keymap.set('x', '<leader>p', '"_dP', { desc = 'Paste without yanking (CC)' })
 
-vim.keymap.set('n', '<leader>y', '"+y', { desc = 'Yank to clipboard (CC)' })
-vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Yank to clipboard (CC)' })
-vim.keymap.set('n', '<leader>Y', '"+Y', { desc = 'Yank to clipboard (CC)' })
+-- vim.keymap.set('n', '<leader>y', '"+y', { desc = 'Yank to clipboard (CC)' })
+-- vim.keymap.set('v', '<leader>y', '"+y', { desc = 'Yank to clipboard (CC)' })
+-- vim.keymap.set('n', '<leader>Y', '"+Y', { desc = 'Yank to clipboard (CC)' })
 
 if not vim.g.vscode then
   vim.keymap.set(
     'n',
-    '<leader>gC',
+    '<leader>dC',
     -- 'silent' prevents the output of the command to be displayed as a message
     -- the usual "silent = true" doesn't work in this case
     -- 'code' arguments: -r = reuse existing window, -g = goto line:col
@@ -46,7 +46,7 @@ if not vim.g.vscode then
   -- end, { noremap = true, silent = true })
 end
 
-vim.keymap.set('n', '<leader>gP', function()
+vim.keymap.set('n', '<leader>dc', function()
   -- Get the clipboard content
   local clipboard = vim.fn.getreg '+'
 
@@ -90,3 +90,22 @@ vim.keymap.set('n', '<leader>wC', function()
     end
   end
 end, { desc = 'Close all unshown buffers (CC)' })
+
+vim.keymap.set('x', '//', function()
+  local esc = vim.fn.escape
+  local getreg = vim.fn.getreg
+  local setreg = vim.fn.setreg
+
+  -- Save current unnamed register
+  local save_reg = getreg '"'
+  vim.cmd 'normal! "zy' -- yank visual selection into "z
+  local selection = esc(getreg 'z', [[\/]])
+  vim.cmd 'normal! gv' -- reselect last visual selection (optional)
+  vim.cmd("let @/ = '" .. selection .. "'") -- set search register
+  setreg('"', save_reg) -- restore unnamed register
+
+  -- Force exit visual mode
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+
+  -- vim.cmd 'normal! n' -- go to next match
+end, { noremap = true, silent = true, desc = 'Search visual selection' })

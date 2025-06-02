@@ -1,4 +1,6 @@
-local config_post = function()
+local T = {}
+
+function T.config_post()
   local builtin = require 'telescope.builtin'
   local fzf = require 'fzf-lua'
 
@@ -54,6 +56,67 @@ local config_post = function()
 
   vim.keymap.set('n', '<leader>sk', fzf.keymaps, { desc = '[S]earch [K]eymaps (CC)' })
 
+  -------
+
+  -- CC: this was a method for picking a specific LSP for hover information,
+  -- before I found out that the builtin hover method already gathers all the
+  -- info together, and it's just Noice that doesn't (so I provided a
+  -- separate keybinding for that: `grK`)
+  --
+  -- local cc_lsp = require 'custom.lsp'
+  --
+  -- vim.keymap.set('n', 'grk', function()
+  --   local method = vim.lsp.protocol.Methods.textDocument_hover
+  --   local clients = cc_lsp.get_clients_supporting_method(method)
+  --
+  --   if not clients or vim.tbl_isempty(clients) then
+  --     vim.notify('No LSP clients supporting hover method', vim.log.levels.INFO)
+  --     return
+  --   end
+  --
+  --   if #clients == 1 then
+  --     vim.lsp.buf.hover()
+  --     return
+  --   end
+  --
+  --   local entries = {}
+  --   local by_id = {}
+  --   for _, client in ipairs(clients) do
+  --     local root = client.config and client.config.root_dir or ''
+  --     if root == '' then
+  --       root = '[no root]'
+  --     else
+  --       root = vim.fn.fnamemodify(root, ':~')
+  --     end
+  --     entries[#entries + 1] = string.format('(%d) %s  %s', client.id, client.name, root)
+  --     by_id[client.id] = client
+  --   end
+  --
+  --   fzf.fzf_exec(entries, {
+  --     prompt = 'Hover client> ',
+  --     previewer = nil,
+  --     actions = {
+  --       ['default'] = function(selected)
+  --         local line = selected[1]
+  --         if not line then
+  --           return
+  --         end
+  --         local id = tonumber(line:match '%((%d+)%)')
+  --         if not id then
+  --           return
+  --         end
+  --         local client = by_id[id]
+  --         if client then
+  --           cc_lsp.hover_from(client.name)
+  --         end
+  --       end,
+  --     },
+  --   })
+  -- end, { desc = 'Hover: LSP Clients (CC)' })
+
+  -- CC: this was a method to list loaded Telescope extensions, I don't need it
+  -- anymore but I'm leaving it commented out for future reference
+  --
   -- vim.keymap.set('n', '<leader>se', function()
   --   local telescope = require 'telescope'
   --   local pickers = require 'telescope.pickers'
@@ -117,7 +180,7 @@ end
 -- end
 
 --- @param cb fun(proc: {pid: integer, name: string})
-local open_process_picker = function(cb)
+function T.open_process_picker(cb)
   -- local telescope = require 'telescope'
   local pickers = require 'telescope.pickers'
   local finders = require 'telescope.finders'
@@ -182,18 +245,16 @@ local function flash(prompt_bufnr)
   }
 end
 
-return {
-  setup = {
-    defaults = {
-      -- sorting_strategy = 'ascending',
-      path_display = { 'smart' },
-      dynamic_preview_title = true,
-      mappings = {
-        n = { s = flash },
-        i = { ['<c-s>'] = flash },
-      },
+T.setup = {
+  defaults = {
+    -- sorting_strategy = 'ascending',
+    path_display = { 'smart' },
+    dynamic_preview_title = true,
+    mappings = {
+      n = { s = flash },
+      i = { ['<c-s>'] = flash },
     },
   },
-  config_post = config_post,
-  open_process_picker = open_process_picker,
 }
+
+return T

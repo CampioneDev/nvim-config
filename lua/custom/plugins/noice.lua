@@ -1,3 +1,6 @@
+-- CC: we store the original hover function before Noice overrides it
+local builtin_hover = vim.lsp.buf.hover
+
 return {
   {
     'folke/noice.nvim',
@@ -38,6 +41,10 @@ return {
             ['vim.lsp.util.stylize_markdown'] = true,
             ['cmp.entry.get_documentation'] = true,
           },
+          hover = {
+            -- CC: suppresses "No information available" messages
+            silent = true,
+          },
         },
         -- you can enable a preset for easier configuration
         presets = {
@@ -53,6 +60,17 @@ return {
     end,
     keys = {
       { '<leader>sm', '<cmd>Telescope noice<cr>', desc = '[S]earch [M]essages (CC)' },
+      {
+        'grK',
+        function()
+          -- CC: we still let Noice override the builtin function, but provide
+          -- a way to call it when needed. It's useful in cases where multiple
+          -- LSPs provide hover information (e.g. ts_ls and cssmodules_ls),
+          -- since Noice shows only one of them (seemingly at random).
+          builtin_hover()
+        end,
+        desc = 'Builtin Neovim Hover (CC)',
+      },
     },
   },
 }

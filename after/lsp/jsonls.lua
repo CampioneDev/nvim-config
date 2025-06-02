@@ -8,6 +8,7 @@ return {
   settings = {
     json = {
       format = {
+        -- CC: I'm actually using prettierd via conform.nvim
         enable = true,
       },
       validate = { enable = true },

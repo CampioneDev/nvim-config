@@ -1,6 +1,7 @@
 vim.api.nvim_create_autocmd('BufRead', {
   pattern = '.vscode/*.json',
   callback = function()
+    -- CC: force vscode JSON files to be recognized as json5 to allow comments
     vim.bo.filetype = 'json5'
   end,
 })

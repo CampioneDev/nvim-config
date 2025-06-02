@@ -1,36 +1,37 @@
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. Available keys are:
---  - cmd (table): Override the default command used to start the server
---  - filetypes (table): Override the default list of associated filetypes for the server
---  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
---  - settings (table): Override the default settings passed when initializing the server.
---        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-local servers = {
-  clangd = {},
-  gopls = {},
-  -- pyright = {},
-  rust_analyzer = nil,
-  -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-  --
-  -- Some languages (like typescript) have entire language plugins that can be useful:
-  --    https://github.com/pmizio/typescript-tools.nvim
-  --
-  -- But for many setups, the LSP (`tsserver`) will work just fine
-  ts_ls = {},
-  bashls = {},
-  html = {},
-  templ = {},
-  cssls = {},
-  jsonls = {},
-  eslint = {},
-  -- CC: added for conform
-  -- eslind_d = nil,
-  lemminx = {},
-  taplo = {},
-}
+local M = {}
 
-return {
-  lsp_servers = servers,
-}
+---@param method string
+---@param bufnr? number
+function M.get_clients_supporting_method(method, bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  ---@param client vim.lsp.Client
+  return vim.tbl_filter(function(client)
+    return client:supports_method(method)
+  end, vim.lsp.get_clients { bufnr = bufnr })
+end
+
+---@param name string
+---@param bufnr? number
+function M.hover_from(name, bufnr)
+  bufnr = bufnr or vim.api.nvim_get_current_buf()
+  for _, client in pairs(vim.lsp.get_clients { bufnr = bufnr }) do
+    if client.name == name then
+      local params = vim.lsp.util.make_position_params(0, client.offset_encoding or 'utf-16')
+      local client_name = client.name
+      client:request('textDocument/hover', params, function(err, result, ctx)
+        local noice_ok, noice_hover = pcall(require, 'noice.lsp.hover')
+        if noice_ok and noice_hover then
+          noice_hover.on_hover(err, result, ctx)
+        else
+          local method = vim.lsp.protocol.Methods.textDocument_hover
+          local handler = client.handlers[method] or vim.lsp.handlers[method]
+          handler(err, result, ctx, { focus_id = 'hover:' .. client_name })
+        end
+      end, bufnr)
+      return
+    end
+  end
+  vim.notify("LSP '" .. name .. "' not attached", vim.log.levels.WARN)
+end
+
+return M

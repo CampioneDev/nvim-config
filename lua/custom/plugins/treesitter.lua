@@ -50,7 +50,7 @@ return {
             -- include_surrounding_whitespace = true,
           },
           swap = {
-            enable = true,
+            enable = false,
             swap_next = {
               ['<leader>a'] = '@parameter.inner',
             },

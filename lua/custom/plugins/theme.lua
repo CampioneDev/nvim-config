@@ -5,61 +5,47 @@ return {
   priority = 1000,
   config = function()
     require('catppuccin').setup {
-      -- disable_background = true -- rosepine
       transparent_background = true, -- catp
+      default_integrations = true,
       integrations = {
-        gitsigns = true,
-        -- nvimtree = true,
-        treesitter = true,
-        barbecue = {
-          dim_dirname = true, -- directory name is dimmed by default
-          bold_basename = true,
-          dim_context = false,
-          alt_background = false,
+        cmp = true,
+        dropbar = {
+          enabled = true,
+          color_mode = false,
         },
-        noice = false,
-        fidget = false,
-        harpoon = false,
+        -- nvimtree = true,
+        noice = true,
+        notify = true,
+        fidget = true,
+        flash = true,
+        fzf = true,
+        gitgraph = true,
+        gitsigns = true,
+        harpoon = true,
         indent_blankline = {
           enabled = true,
           -- scope_color = '', -- catppuccin color (eg. `lavender`) Default: text
           colored_indent_levels = false,
         },
         mason = false,
-        cmp = true,
-        neotest = false,
+        -- neotest = false,
         dap = true,
         dap_ui = true,
-        native_lsp = {
+        overseer = true,
+        snacks = {
           enabled = true,
-          virtual_text = {
-            errors = { 'italic' },
-            hints = { 'italic' },
-            warnings = { 'italic' },
-            information = { 'italic' },
-            ok = { 'italic' },
-          },
-          underlines = {
-            errors = { 'underline' },
-            hints = { 'underline' },
-            warnings = { 'underline' },
-            information = { 'underline' },
-            ok = { 'underline' },
-          },
-          inlay_hints = {
-            background = true,
-          },
+          -- indent_scope_color = '', -- catppuccin color (eg. `lavender`) Default: text
         },
         telescope = {
           enabled = true,
         },
-        trouble = false,
-        dadbod_ui = false,
+        lsp_trouble = true,
+        dadbod_ui = true,
         illuminate = {
           enabled = true,
           lsp = false,
         },
-        which_key = false,
+        which_key = true,
       },
     }
 

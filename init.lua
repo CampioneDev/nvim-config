@@ -197,7 +197,7 @@ require 'custom/configs'
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
--- CC: we use `nvim-tmux-navigation`
+-- CC: we use `smart-splits.nvim` instead
 -- vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 -- vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 -- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
@@ -275,18 +275,18 @@ require('lazy').setup({
   -- options to `gitsigns.nvim`.
   --
   -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
+  -- { -- Adds git related signs to the gutter, as well as utilities for managing changes
+  --   'lewis6991/gitsigns.nvim',
+  --   opts = {
+  --     signs = {
+  --       add = { text = '+' },
+  --       change = { text = '~' },
+  --       delete = { text = '_' },
+  --       topdelete = { text = '‾' },
+  --       changedelete = { text = '~' },
+  --     },
+  --   },
+  -- },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -689,7 +689,8 @@ require('lazy').setup({
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-      local capabilities = require('blink.cmp').get_lsp_capabilities()
+      -- CC: we can skip all this! https://cmp.saghen.dev/installation#lsp-capabilities
+      -- local capabilities = require('blink.cmp').get_lsp_capabilities()
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -700,37 +701,37 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
-
-        lua_ls = {
-          -- cmd = { ... },
-          -- filetypes = { ... },
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
-      }
-
-      servers = vim.tbl_deep_extend('force', servers, require('custom.lsp').lsp_servers)
+      -- local servers = {
+      --   -- clangd = {},
+      --   -- gopls = {},
+      --   -- pyright = {},
+      --   -- rust_analyzer = {},
+      --   -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+      --   --
+      --   -- Some languages (like typescript) have entire language plugins that can be useful:
+      --   --    https://github.com/pmizio/typescript-tools.nvim
+      --   --
+      --   -- But for many setups, the LSP (`ts_ls`) will work just fine
+      --   -- ts_ls = {},
+      --   --
+      --
+      --   lua_ls = {
+      --     -- cmd = { ... },
+      --     -- filetypes = { ... },
+      --     -- capabilities = {},
+      --     settings = {
+      --       Lua = {
+      --         completion = {
+      --           callSnippet = 'Replace',
+      --         },
+      --         -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+      --         diagnostics = { disable = { 'missing-fields' } },
+      --       },
+      --     },
+      --   },
+      -- }
+      --
+      -- servers = vim.tbl_deep_extend('force', servers, require('custom.lsp').lsp_servers)
 
       -- Ensure the servers and tools above are installed
       --
@@ -745,31 +746,33 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-      })
+      -- local ensure_installed = vim.tbl_keys(servers or {})
+      local ensure_installed = require('custom.mason').mason_packages
+      -- vim.list_extend(ensure_installed, {
+      --   'stylua', -- Used to format Lua code
+      -- })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,
         automatic_enable = true,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] -- or {}
-            -- CC: if a server is nil it just gets installed and not setup
-            if not server then
-              -- print('LSP: Server ' .. server_name .. ' is skipped')
-              return
-            end
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
+        -- CC: We don't need this anymore in newer neovim versions
+        -- handlers = {
+        --   function(server_name)
+        --     local server = servers[server_name] -- or {}
+        --     -- CC: if a server is nil it just gets installed and not setup
+        --     if not server then
+        --       -- print('LSP: Server ' .. server_name .. ' is skipped')
+        --       return
+        --     end
+        --     -- This handles overriding only values explicitly passed
+        --     -- by the server configuration above. Useful when disabling
+        --     -- certain features of an LSP (for example, turning off formatting for ts_ls)
+        --     server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        --     require('lspconfig')[server_name].setup(server)
+        --   end,
+        -- },
       }
     end,
   },
@@ -804,17 +807,31 @@ require('lazy').setup({
           }
         end
       end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        css = { 'prettierd' },
-        scss = { 'prettierd' },
-        sql = { 'sql_formatter' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      },
+      formatters_by_ft = (function()
+        local mi = require('custom.mason').mason_installed
+        local f = {
+          lua = { 'stylua' },
+          -- Conform can also run multiple formatters sequentially
+          python = { mi 'isort', mi 'black' },
+          --
+          -- You can use 'stop_after_first' to run the first available formatter from the list
+          -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        }
+
+        local prettier_installed = vim.fn.executable 'prettierd' == 1
+        if prettier_installed then
+          f['css'] = { 'prettierd' }
+          f['scss'] = { 'prettierd' }
+          f['json'] = { 'prettierd' }
+          f['json5'] = { 'prettierd' }
+        end
+        local sql_formatter_installed = vim.fn.executable 'sql-formatter' == 1 and mi 'sql-formatter' ~= nil
+        if sql_formatter_installed then
+          f['sql'] = { 'sql_formatter' }
+        end
+
+        return f
+      end)(),
       -- log_level = vim.log.levels.TRACE,
       formatters = {
         sql_formatter = {
@@ -824,7 +841,7 @@ require('lazy').setup({
               dataTypeCase = 'upper',
               functionCase = 'upper',
               keywordCase = 'upper',
-              dialect = 'sqlite',
+              language = 'sqlite',
               -- https://github.com/sql-formatter-org/sql-formatter/blob/master/docs/paramTypes.md
               paramTypes = {
                 named = {

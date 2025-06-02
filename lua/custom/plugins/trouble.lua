@@ -3,7 +3,7 @@ return {
   enabled = not vim.g.vscode,
   opts = {}, -- for default options, refer to the configuration section for custom setup.
   cmd = 'Trouble',
-  config = function()
+  init = function()
     require('which-key').add {
       { '<leader>x', group = 'Trouble' },
       { '<leader>x_', hidden = true },
