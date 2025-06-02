@@ -6,6 +6,8 @@ nvim
 spell/
 lazy-lock.json
 
+.DS_Store
+
 Session.vim
 
 .supermaven/

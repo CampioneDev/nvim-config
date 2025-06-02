@@ -1,4 +1,6 @@
-local config_post = function()
+local T = {}
+
+function T.config_post()
   local builtin = require 'telescope.builtin'
   local fzf = require 'fzf-lua'
 
@@ -117,7 +119,7 @@ end
 -- end
 
 --- @param cb fun(proc: {pid: integer, name: string})
-local open_process_picker = function(cb)
+function T.open_process_picker(cb)
   -- local telescope = require 'telescope'
   local pickers = require 'telescope.pickers'
   local finders = require 'telescope.finders'
@@ -182,18 +184,16 @@ local function flash(prompt_bufnr)
   }
 end
 
-return {
-  setup = {
-    defaults = {
-      -- sorting_strategy = 'ascending',
-      path_display = { 'smart' },
-      dynamic_preview_title = true,
-      mappings = {
-        n = { s = flash },
-        i = { ['<c-s>'] = flash },
-      },
+T.setup = {
+  defaults = {
+    -- sorting_strategy = 'ascending',
+    path_display = { 'smart' },
+    dynamic_preview_title = true,
+    mappings = {
+      n = { s = flash },
+      i = { ['<c-s>'] = flash },
     },
   },
-  config_post = config_post,
-  open_process_picker = open_process_picker,
 }
+
+return T

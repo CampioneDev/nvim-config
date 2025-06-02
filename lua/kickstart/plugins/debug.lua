@@ -151,6 +151,7 @@ return {
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
     dapui.setup {
+
       -- Set icons to characters that are more likely to work in every terminal.
       --    Feel free to remove or use ones that you like more! :)
       --    Don't feel like these are good choices.
@@ -204,6 +205,12 @@ return {
     end
 
     require('custom.dap').dap_node()
+
+    -- CC: catppuccin integration:
+    local sign = vim.fn.sign_define
+    sign('DapBreakpoint', { text = '●', texthl = 'DapBreakpoint', linehl = '', numhl = '' })
+    sign('DapBreakpointCondition', { text = '●', texthl = 'DapBreakpointCondition', linehl = '', numhl = '' })
+    sign('DapLogPoint', { text = '◆', texthl = 'DapLogPoint', linehl = '', numhl = '' })
 
     -- if vim.fn.has 'win32' == 1 then
     --   dap.set_log_level 'TRACE'
